@@ -48,9 +48,11 @@ def create_app(settings=None, model_service=None, agent_service=None):
         if app.state.agent is None:
             from app.agent import AgentService
             app.state.agent = AgentService(settings)
-        yield
-        app.state.agent.close()
-        database.close()
+        try:
+            yield
+        finally:
+            app.state.agent.close()
+            database.close()
 
     app = FastAPI(title="智聊助手 API", version="1.0.0", lifespan=lifespan)
     app.state.database = database

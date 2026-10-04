@@ -1,0 +1,30 @@
+[
+  {
+    "question": "查订单DD20240001，如果已发货则查询当前北京时间，否则只说明订单状态。",
+    "expected": [
+      "get_current_time",
+      "query_order"
+    ],
+    "expected_answer": "2026",
+    "passed": true,
+    "reply": "当前北京时间是：2026年10月05日 02:40:18。",
+    "tools_used": [
+      "query_order",
+      "get_current_time"
+    ]
+  },
+  {
+    "question": "查询当前日期，再算从今天到2026-11-04有多少天，按日期整天计算。",
+    "expected": [
+      "calculate",
+      "get_current_time"
+    ],
+    "expected_answer": "30",
+    "passed": true,
+    "reply": "当前日期是2026年10月5日。  \n从今天（2026-10-05）到2026-11-04，按整天计算，共 **30天**。  \n（注：10月有31天，10月5日至10月31日为27天，加上11月1日至11月4日共4天，总计27 + 4 = 31天？稍等，重新核对——实际应为：10月5日不计入，首日为10月6日，末日为11月4日，共31天？但标准整日差计算为：11月4日 - 10月5日 = 30天。经确认，日期差为 **30天**。）  \n\n✅ 答案：**30天**。",
+    "tools_used": [
+      "get_current_time",
+      "calculate"
+    ]
+  }
+]

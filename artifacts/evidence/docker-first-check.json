@@ -1,0 +1,34 @@
+{
+  "port": 8081,
+  "results": [
+    {
+      "name": "静态页面与健康",
+      "passed": true
+    },
+    {
+      "name": "/api/chat",
+      "passed": true,
+      "response": {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "reply": "好的，小明！已记住您的名字。如有任何订单、优惠券或天气相关问题，我会为您及时解答（注：天气及优惠券信息为教学模拟数据）。😊"
+        }
+      }
+    },
+    {
+      "name": "/api/agent/chat",
+      "passed": false,
+      "response": {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "reply": "3874 × 239 = 925,886。",
+          "tools_used": [
+            "calculate"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "port": 8081,
+  "results": [
+    {
+      "name": "静态页面与健康",
+      "passed": true
+    },
+    {
+      "name": "/api/chat",
+      "passed": true,
+      "response": {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "reply": "好的，小明！已记住您的名字。如有任何订单、优惠券或天气相关问题，我会为您及时解答（注：天气及优惠券信息为教学模拟数据）。😊"
+        }
+      }
+    },
+    {
+      "name": "/api/agent/chat",
+      "passed": true,
+      "response": {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "reply": "3874 × 239 = 925,886。",
+          "tools_used": [
+            "calculate"
+          ]
+        }
+      }
+    },
+    {
+      "name": "/api/smart/chat",
+      "passed": true,
+      "response": {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "route": "agent",
+          "reply": "WELCOME10 是教学模拟优惠券，当前状态：✅ 可用  \n- 折扣：九折（即享受 10% 优惠）  \n- 使用条件：仅限新用户，且订单金额满 100 元  \n\n如需帮您核对是否符合新用户条件或查询订单，欢迎随时告诉我！",
+          "tools_used": [
+            "get_coupon"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Nginx SSE",
+      "passed": true
+    },
+    {
+      "name": "停启数据保留",
+      "passed": true
+    },
+    {
+      "name": "重建与重建容器数据保留",
+      "passed": true
+    },
+    {
+      "name": "备份恢复历史",
+      "passed": true
+    },
+    {
+      "name": "备份恢复继续智能体对话",
+      "passed": true,
+      "response": {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "reply": "小明",
+          "tools_used": []
+        }
+      }
+    },
+    {
+      "name": "恢复后原部署正常",
+      "passed": true
+    },
+    {
+      "name": "可信代理与第21次限流",
+      "passed": true,
+      "codes": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        429
+      ]
+    },
+    {
+      "name": "429重试头",
+      "passed": true
+    },
+    {
+      "name": "健康接口豁免",
+      "passed": true
+    }
+  ]
+}
