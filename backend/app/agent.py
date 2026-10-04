@@ -9,7 +9,11 @@ from app.config import SYSTEM_PROMPT
 from app.llm import make_model, text_content, to_messages
 from app.tools import TOOLS
 
-AGENT_RULE = "订单、天气、计算、当前时间、优惠券请求必须调用对应工具；其他问题正常回答，不为调用而调用。"
+AGENT_RULE = ("订单、天气、计算、当前时间、优惠券请求必须调用对应工具；"
+              "未知或格式异常的订单号也交给订单工具查询，禁止自行推断不存在。"
+              "当前日期与时间必须严格依据本轮get_current_time返回值，禁止采用训练数据中的日期。"
+              "时间工具和计算工具返回真实时钟与确定性计算结果，不属于模拟业务数据。"
+              "其他问题正常回答，不为调用而调用。")
 
 
 class ChatAgentState(AgentState):

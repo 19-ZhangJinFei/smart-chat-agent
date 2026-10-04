@@ -1,0 +1,112 @@
+[
+  {
+    "path": "/api/chat",
+    "message": "我叫小明，请记住",
+    "passed": true,
+    "response": {
+      "code": 0,
+      "message": "success",
+      "data": {
+        "reply": "好的，小明！已记住您的名字，很高兴为您服务～😊"
+      }
+    }
+  },
+  {
+    "path": "/api/chat",
+    "message": "我叫什么名字？",
+    "passed": true,
+    "response": {
+      "code": 0,
+      "message": "success",
+      "data": {
+        "reply": "您叫小明！😊"
+      }
+    }
+  },
+  {
+    "path": "/api/agent/chat",
+    "message": "订单DD20240001现在到哪里了？",
+    "passed": true,
+    "response": {
+      "code": 0,
+      "message": "success",
+      "data": {
+        "reply": "订单 DD20240001 已发货，当前由顺丰速运承运，预计明日18:00前送达。如有其他问题，欢迎随时告诉我！😊",
+        "tools_used": [
+          "query_order"
+        ]
+      }
+    }
+  },
+  {
+    "path": "/api/chat",
+    "message": "我喜欢蓝色，请记住",
+    "passed": true,
+    "response": {
+      "code": 0,
+      "message": "success",
+      "data": {
+        "reply": "已记住，小明喜欢蓝色～💙"
+      }
+    }
+  },
+  {
+    "path": "/api/agent/chat",
+    "message": "我喜欢什么颜色？",
+    "passed": true,
+    "response": {
+      "code": 0,
+      "message": "success",
+      "data": {
+        "reply": "您喜欢蓝色～💙",
+        "tools_used": []
+      }
+    }
+  },
+  {
+    "path": "/api/smart/chat",
+    "message": "用一句话介绍Docker",
+    "passed": true,
+    "response": {
+      "code": 0,
+      "message": "success",
+      "data": {
+        "route": "chat",
+        "reply": "Docker 是一个开源的容器化平台，能让应用程序及其依赖打包成轻量、可移植的容器，在任何支持 Docker 的环境中一致运行。",
+        "tools_used": []
+      }
+    }
+  },
+  {
+    "path": "/api/smart/chat",
+    "message": "WELCOME10优惠券有效吗？",
+    "passed": true,
+    "response": {
+      "code": 0,
+      "message": "success",
+      "data": {
+        "route": "agent",
+        "reply": "WELCOME10 优惠券**有效**，适用于新用户，满足最低消费100元即可享受**九折优惠**。😊",
+        "tools_used": [
+          "get_coupon"
+        ]
+      }
+    }
+  },
+  {
+    "name": "真实SSE",
+    "passed": true
+  },
+  {
+    "name": "双库重启记忆",
+    "passed": true,
+    "response": {
+      "code": 0,
+      "message": "success",
+      "data": {
+        "reply": "您叫小明，喜欢蓝色～💙",
+        "tools_used": []
+      }
+    }
+  }
+]

@@ -1,0 +1,16 @@
+[
+  {
+    "strict_prompt": true,
+    "reply": "订单DD20240001已发货，由顺丰速运承运，预计明日18:00前送达。  \n（注：此为教学模拟数据，非真实订单状态）",
+    "tools_used": [
+      "query_order"
+    ]
+  },
+  {
+    "strict_prompt": false,
+    "reply": "订单DD20240001已发货，由顺丰速运承运，预计明日18:00前送达。  \n（注：以上为教学模拟数据，非真实物流信息）",
+    "tools_used": [
+      "query_order"
+    ]
+  }
+]
