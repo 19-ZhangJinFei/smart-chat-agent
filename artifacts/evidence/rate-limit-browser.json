@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-06",
+  "environment": "isolated offline browser fixture, fake models, no production data",
+  "backend_tests": 33,
+  "frontend_tests": 9,
+  "normal_turn_requests": 1,
+  "stream_turn_requests": 1,
+  "rate_limit": "20 API requests per IP per 60 seconds, health excluded",
+  "countdown_verified": true,
+  "send_disabled_during_cooldown": true,
+  "duplicate_toasts": 0,
+  "retry_failed_placeholders_after_success": 0,
+  "retry_recovery_messages": 4,
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/sessions",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/sessions",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/sessions/48c2d1b014f24045b0e761bfe66cb4fe/messages",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/smart/chat",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/smart/chat",
+      "status": 429
+    },
+    {
+      "method": "POST",
+      "path": "/api/smart/chat",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/chat/stream",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/chat/stream",
+      "status": 429
+    }
+  ]
+}

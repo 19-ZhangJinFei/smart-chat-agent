@@ -3,6 +3,9 @@ import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Promotion, Loading } from '@element-plus/icons-vue'
 import { getMessages, sendChat, sendStream } from '../api/index.js'
+import { cooldown } from '../api/errors.js'
+import { beginTurn, settleTurn } from '../api/turn.js'
+import { useCooldown } from '../composables/useCooldown.js'
 
 const props = defineProps({ sessionId: String, title: String, modelReady: Boolean })
 const emit = defineEmits(['busy', 'complete'])
@@ -15,6 +18,7 @@ const historyLoading = ref(true)
 const historyError = ref('')
 const messageList = ref(null)
 let controller
+const retrySeconds = useCooldown()
 const examples = [
   { label: '订单进度', message: '订单 DD20240001 现在是什么状态？' },
   { label: '天气与发货', message: '长沙今天天气怎么样，适合发货吗？' },
@@ -36,41 +40,46 @@ onMounted(loadHistory)
 onUnmounted(() => controller?.abort())
 
 async function send(retryText) {
-  if (loading.value || historyLoading.value || historyError.value) return
-  const text = typeof retryText === 'string' ? retryText : input.value.trim()
+  if (loading.value || historyLoading.value || historyError.value || cooldown.remaining()) return
+  if (retryText?.failed && !retryText.notAccepted) {
+    // 网络断开时服务端可能已提交，先核对历史，不自动重复生成。
+    input.value = retryText.retryText
+    await loadHistory()
+    return
+  }
+  const text = retryText?.failed ? retryText.retryText : input.value.trim()
   if (!text || text.length > 2000) { ElMessage.warning('请输入1—2000个字符'); return }
   loading.value = true
   emit('busy', true)
   input.value = ''
-  const user = { role: 'user', content: text, pending: true }
-  const answer = { role: 'assistant', content: '', pending: true, tools_used: [] }
-  messages.value.push(user, answer)
-  const index = messages.value.length - 1
+  const index = beginTurn(messages.value, text)
   await scroll()
   try {
+    let result
     if (mode.value === 'chat' && stream.value) {
       controller = new AbortController()
       const timer = setTimeout(() => controller.abort(), 120000)
       try {
-        await sendStream(text, props.sessionId, delta => {
+        result = await sendStream(text, props.sessionId, delta => {
           messages.value[index].content += delta
           scroll()
         }, controller.signal)
       } finally { clearTimeout(timer) }
     } else {
-      const result = await sendChat(mode.value, text, props.sessionId)
+      result = await sendChat(mode.value, text, props.sessionId)
       Object.assign(messages.value[index], {
         content: result.reply, tools_used: result.tools_used || [], route: result.route || mode.value,
       })
     }
-    await loadHistory()
-    emit('complete')
+    settleTurn(messages.value, index, result)
+    emit('complete', result.session)
   } catch (error) {
     messages.value[index].failed = true
     messages.value[index].retryText = text
     messages.value[index].error = error.name === 'AbortError' ? '请求已中断或超时，请重试' : error.message
+    messages.value[index].notAccepted = !!error.notAccepted
+    messages.value[index].rateLimited = error.status === 429
     input.value = text
-    ElMessage.error(messages.value[index].error)
   } finally {
     loading.value = false
     emit('busy', false)
@@ -101,7 +110,7 @@ function handleKey(event) {
         <span>{{ mode === 'chat' ? '流式输出' : '流式仅适用于普通对话' }}</span></div>
     </div>
     <div ref="messageList" class="chat-body" aria-live="polite">
-      <div v-if="historyError" class="history-error" role="alert">{{ historyError }} <el-button @click="loadHistory">重新加载</el-button></div>
+      <div v-if="historyError" class="history-error" role="alert">{{ historyError }} <el-button :disabled="retrySeconds > 0" @click="loadHistory">{{ retrySeconds ? `等待 ${retrySeconds} 秒` : '重新加载' }}</el-button></div>
       <div v-else-if="historyLoading" class="history-error">正在恢复对话…</div>
       <div v-else-if="!messages.length" class="conversation-start">
         <span class="brand-orb small">聊</span><h1>你好，有什么可以帮你？</h1>
@@ -117,16 +126,18 @@ function handleKey(event) {
           <div v-if="message.tools_used?.length" class="tool-tags"><span v-for="tool in message.tools_used" :key="tool">⚙ {{ tool }}</span></div>
           <div class="message-text" :class="{ incomplete: message.failed }">{{ message.content }}</div>
           <div v-if="loading && index === messages.length - 1 && !message.content" class="thinking"><el-icon class="is-loading"><Loading /></el-icon>正在处理你的问题…</div>
-          <div v-if="message.failed" class="failed-message">{{ message.error }}<span>本轮未确认完成，请以刷新后的记录为准</span>
-            <el-button size="small" :disabled="loading" @click="send(message.retryText)">重试</el-button></div>
+          <div v-if="message.failed" class="failed-message">{{ message.error }}
+            <span>{{ message.notAccepted ? '本轮未生成回复，问题已保留。' : '本轮状态未确认，请先核对历史记录，再决定是否重新发送。' }}</span>
+            <el-button size="small" :disabled="loading || retrySeconds > 0" @click="send(message)">{{ retrySeconds ? `等待 ${retrySeconds} 秒` : message.notAccepted ? '重试' : '核对记录' }}</el-button></div>
         </div>
       </article>
     </div>
     <footer class="composer">
       <div v-if="!modelReady" class="model-warning">模型尚未配置，可以管理会话；对话需要本地 API Key。</div>
+      <div v-if="retrySeconds" class="model-warning" role="status">操作较快，请等待 {{ retrySeconds }} 秒后继续。可以先编辑问题。</div>
       <div class="composer-box"><el-input v-model="input" type="textarea" :rows="2" :maxlength="2000" resize="none"
         aria-label="消息内容" placeholder="输入问题，Enter 发送，Shift+Enter 换行" :disabled="loading || historyLoading || !!historyError" @keydown="handleKey" />
-        <el-button type="primary" :icon="Promotion" :loading="loading" :disabled="!input.trim() || historyLoading || !!historyError" aria-label="发送消息" @click="send()">发送</el-button>
+        <el-button type="primary" :icon="Promotion" :loading="loading" :disabled="!input.trim() || historyLoading || !!historyError || retrySeconds > 0" aria-label="发送消息" @click="send()">{{ retrySeconds ? `等待 ${retrySeconds} 秒` : '发送' }}</el-button>
       </div>
       <div class="composer-note"><span>订单、天气与优惠券为教学模拟数据，请勿用于真实业务决策</span><span>{{ input.length }} / 2000</span></div>
     </footer>

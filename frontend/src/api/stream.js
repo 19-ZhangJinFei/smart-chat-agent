@@ -1,7 +1,10 @@
 /** SSE事件跨网络块缓冲，完整事件才进行JSON解析。 */
+import { responseError } from './errors.js'
+
 export function createSSEParser(onEvent) {
   let buffer = ''
   let completed = false
+  let saved = {}
   return {
     push(text) {
       buffer += text
@@ -16,11 +19,13 @@ export function createSSEParser(onEvent) {
         if (data === '[DONE]') { completed = true; continue }
         const payload = JSON.parse(data)
         if (payload.error) throw new Error(payload.error)
+        if (payload.saved) saved = payload.saved
         if (typeof payload.delta === 'string') onEvent(payload.delta)
       }
     },
     finish() {
       if (!completed) throw new Error('回复未完成，请重试；未完成内容不会保存为成功记录')
+      return saved
     },
   }
 }
@@ -28,7 +33,7 @@ export function createSSEParser(onEvent) {
 export async function consumeSSE(response, onDelta) {
   if (!response.ok) {
     const error = await response.json().catch(() => ({}))
-    throw new Error(error.message || `服务返回 ${response.status}`)
+    throw responseError(response.status, error, response.headers.get('retry-after'))
   }
   if (!response.headers.get('content-type')?.includes('text/event-stream')) {
     throw new Error('服务没有返回流式响应')
@@ -43,7 +48,7 @@ export async function consumeSSE(response, onDelta) {
       parser.push(decoder.decode(value, { stream: true }))
     }
     parser.push(decoder.decode())
-    parser.finish()
+    return parser.finish()
   } catch (error) {
     await reader.cancel().catch(() => {})
     throw error
