@@ -1,3 +1,4 @@
+import asyncio
 import sqlite3
 from uuid import uuid4
 
@@ -6,7 +7,7 @@ from langchain_core.messages import HumanMessage
 from langgraph.checkpoint.sqlite import SqliteSaver
 
 from app.config import SYSTEM_PROMPT
-from app.llm import make_model, text_content, to_messages
+from app.llm import close_model_clients, make_model, text_content, to_messages
 from app.tools import TOOLS
 
 AGENT_RULE = ("订单、天气、计算、当前时间、优惠券请求必须调用对应工具；"
@@ -25,16 +26,26 @@ class AgentService:
         self.settings, self.model, self.strict = settings, model, strict
         settings.agent_db_path.parent.mkdir(parents=True, exist_ok=True)
         self.conn = sqlite3.connect(settings.agent_db_path, check_same_thread=False, timeout=15)
-        self.conn.execute("PRAGMA journal_mode=WAL")
-        self.saver = SqliteSaver(self.conn)
-        self.saver.setup()
+        try:
+            self.conn.execute("PRAGMA journal_mode=WAL")
+            self.saver = SqliteSaver(self.conn)
+            self.saver.setup()
+        except BaseException:
+            self.conn.close()
+            raise
         self._graph = None
+        self._owned_model = None
 
     @property
     def graph(self):
         if self._graph is None:
+            model = self.model
+            if model is None:
+                if self._owned_model is None:
+                    self._owned_model = make_model(self.settings, 0)
+                model = self._owned_model
             self._graph = create_agent(
-                model=self.model or make_model(self.settings, 0), tools=TOOLS,
+                model=model, tools=TOOLS,
                 system_prompt=SYSTEM_PROMPT + (AGENT_RULE if self.strict else ""),
                 checkpointer=self.saver, state_schema=ChatAgentState)
         return self._graph
@@ -77,4 +88,12 @@ class AgentService:
             raise
 
     def close(self):
-        self.conn.close()
+        # 同步演示脚本使用close，ASGI生命周期使用aclose。
+        asyncio.run(self.aclose())
+
+    async def aclose(self):
+        model, self._owned_model = self._owned_model, None
+        try:
+            await close_model_clients(model)
+        finally:
+            self.conn.close()
