@@ -1,0 +1,37 @@
+{
+  "kind": "offline-synthetic-character-analysis",
+  "history_turns": 20,
+  "history_char_limit": 16000,
+  "rows": [
+    {
+      "saved_turns": 1,
+      "saved_characters": 176,
+      "context_turns": 1,
+      "context_characters": 176
+    },
+    {
+      "saved_turns": 10,
+      "saved_characters": 1760,
+      "context_turns": 10,
+      "context_characters": 1760
+    },
+    {
+      "saved_turns": 20,
+      "saved_characters": 3540,
+      "context_turns": 20,
+      "context_characters": 3540
+    },
+    {
+      "saved_turns": 30,
+      "saved_characters": 5320,
+      "context_turns": 20,
+      "context_characters": 3560
+    },
+    {
+      "saved_turns": 100,
+      "saved_characters": 17780,
+      "context_turns": 20,
+      "context_characters": 3560
+    }
+  ]
+}
