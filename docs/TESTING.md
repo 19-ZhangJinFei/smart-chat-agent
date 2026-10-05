@@ -16,6 +16,8 @@
 | Docker验收 | 全部13项通过 | docker-acceptance.json |
 | 浏览器 | 会话/模式/流式/改名/刷新/删除通过 | frontend与docker-browser截图 |
 
+续查补充：中文输入法组合Enter不发送；精确URL拦截制造网络故障后，中文错误提示、原问题保留、解除拦截后重试成功。故障注入与真实模型调用分别标记，浏览器证据见browser-boundaries.json与browser-error.png。Docker Desktop的过期运行socket修复后，两服务健康且8081真实流式再次验证。
+
 ## 问题与修正
 
 首次补充题订单NOTFOUND未调用工具。加强订单说明与提示规则后，同一固定评估再测14题全部通过。两份eval按timestamp可识别前后，未删除失败。

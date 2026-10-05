@@ -6,7 +6,7 @@ from app import memory
 from app.agent import AgentService
 from app.main import create_app
 from conftest import FakeModels, new_session
-from test_agent import OfflineToolModel
+from test_agent_memory import OfflineToolModel
 
 
 def test_history_window_keeps_complete_recent_pairs(settings):
