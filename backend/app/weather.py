@@ -71,11 +71,18 @@ class WeatherSearch:
             if weather_source:
                 sources.append(weather_source)
             rows = payload.get('results')
+            lookup_city = city.removesuffix('市')
+            region = next((name for name in REGIONS if lookup_city.startswith(name) and len(lookup_city) > len(name)), '')
+            if region:
+                lookup_city = lookup_city[len(region):].removeprefix('省').removeprefix('市').strip()
             for row in (rows[:3] if isinstance(rows, list) else []):
                 if not isinstance(row, dict):
                     continue
                 url, content = row.get('url'), row.get('content')
                 if not isinstance(url, str) or not isinstance(content, str) or not content.strip():
+                    continue
+                # 搜索引擎可能返回异地页面，只保留提及所查城市的摘要。
+                if lookup_city.casefold() not in (str(row.get('title', '')) + ' ' + content).casefold():
                     continue
                 try:
                     parsed = urlsplit(url)

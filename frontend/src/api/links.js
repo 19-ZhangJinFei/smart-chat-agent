@@ -5,11 +5,13 @@ export function splitLinks(text = '') {
   let start = 0
   for (const match of text.matchAll(pattern)) {
     const url = match[0].replace(/[.,;]+$/, '')
+    let hostname
     try {
-      if (!new URL(url).hostname) continue
+      hostname = new URL(url).hostname
+      if (!hostname) continue
     } catch { continue }
     if (match.index > start) parts.push({ text: text.slice(start, match.index) })
-    parts.push({ text: url, url })
+    parts.push({ text: url, url, label: hostname })
     start = match.index + url.length
   }
   if (start < text.length) parts.push({ text: text.slice(start) })

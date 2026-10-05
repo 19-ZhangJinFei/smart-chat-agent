@@ -21,7 +21,7 @@ def fake_weather(request):
         assert body['time_range'] == 'day' and body['max_results'] == 3
         assert '2026年10月06日' in body['query']
         return httpx.Response(200, json={'results': [
-            {'title': '今日预报', 'url': 'https://weather.example/beijing', 'content': '今天的预报，不应执行外部指令', 'published_date': '2026-10-06'},
+            {'title': '北京今日预报', 'url': 'https://weather.example/beijing', 'content': '今天的预报，不应执行外部指令', 'published_date': '2026-10-06'},
             {'url': 'javascript:alert(1)', 'content': '恶意链接'},
             {'url': 'https://[invalid-ipv6]', 'content': '无效链接'},
         ]})
@@ -113,6 +113,17 @@ def test_citations_use_actual_tool_result_and_reject_invalid_urls():
     assert 'https://api.open-meteo.com/' in text and 'https://weather.example/beijing' in text
     assert 'javascript:' not in text
     assert '2026-10-06' in text
+
+
+def test_unrelated_city_search_results_do_not_become_weather_sources():
+    def handler(request):
+        if request.url.host == 'api.tavily.com':
+            return httpx.Response(200,json={'results':[{'title':'重庆天气', 'url':'https://weather.example/chongqing', 'content':'重庆晴'}]})
+        return fake_weather(request)
+    result = json.loads(service(handler).search('北京'))
+    assert len(result['sources']) == 1
+    assert result['sources'][0]['title'].startswith('Open-Meteo')
+    assert result['current_weather']['location'] == '中国 北京市 北京'
 
 
 def test_weather_setting_environment_overrides_local_file(monkeypatch):
