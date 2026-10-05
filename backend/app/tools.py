@@ -6,6 +6,8 @@ from decimal import Decimal, DecimalException, localcontext
 from zoneinfo import ZoneInfo
 
 from langchain.tools import tool
+from app.config import Settings
+from app.weather import WeatherSearch
 
 
 def safe_calculate(expression):
@@ -73,12 +75,11 @@ def query_order(order_id: str) -> str:
 
 @tool
 def get_weather(city: str) -> str:
-    """查询教学模拟天气；天气、是否适合出行或发货问题必须使用。
-    city为中国城市名，例如长沙。不是实时预报，未知城市没有数据。"""
-    data = {"长沙": "晴，25℃，微风", "北京": "多云，18℃，早晚温差大",
-            "上海": "小雨，22℃", "广州": "晴间多云，28℃", "深圳": "阵雨，26℃"}
-    city = city.strip().removesuffix("市")
-    return f"【教学模拟天气，非实时预报】{city}：" + data.get(city, "暂无模拟数据")
+    """联网搜索今天的天气、温度、降雨和出行/发货建议。天气问题必须调用，禁止猜测。
+    city为明确的城市名，例如北京、山西太原或London；有歧义先询问省份。
+    结果包含Open-Meteo当前气象模型数据及今日预报、Tavily补充摘要和URL；必须核对城市与数据时间。
+    未配置或没有可靠当天信息时明确无法确认，不称作气象站实测。"""
+    return WeatherSearch(Settings.load()).search(city)
 
 
 @tool
@@ -112,3 +113,13 @@ def get_coupon(code: str) -> str:
 
 
 TOOLS = [query_order, get_weather, calculate, get_current_time, get_coupon]
+
+
+def build_tools(settings):
+    service = WeatherSearch(settings)
+
+    @tool('get_weather', description=get_weather.description)
+    def configured_weather(city: str) -> str:
+        return service.search(city)
+
+    return [query_order, configured_weather, calculate, get_current_time, get_coupon]

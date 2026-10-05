@@ -26,7 +26,8 @@ def package(profile_path, private_dir, env_path):
         raise ValueError("先保存排版检查通过的报告初稿")
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     archive = subprocess.check_output(["git", "archive", "--format=zip", commit], cwd=ROOT)
-    secrets = [os.environ.get("LLM_API_KEY") or dotenv_values(env_path).get("LLM_API_KEY", "")]
+    config = dotenv_values(env_path)
+    secrets = [os.environ.get(name) or config.get(name, '') for name in ('LLM_API_KEY', 'TAVILY_API_KEY')]
     secrets += [profile["姓名"], profile["学号"]]
     hashes = {}
     with zipfile.ZipFile(io.BytesIO(archive)) as source:

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { ApiError, responseError, createCooldown } from '../src/api/errors.js'
 import { beginTurn, settleTurn } from '../src/api/turn.js'
 import { consumeSSE } from '../src/api/stream.js'
+import { splitLinks } from '../src/api/links.js'
 
 test('HTTP和SSE限流保留状态和服务器等待时间，拒绝不等同于未知完成状态', async () => {
   const failure = responseError(429, { message: '请求过于频繁', data: { retry_after: 17 } })
@@ -66,4 +67,11 @@ test('缺失或异常Retry-After使用有界的默认等待时间', () => {
   assert.equal(responseError(429, {}).retryAfter, 60)
   assert.equal(responseError(429, {}, 'not-a-date').retryAfter, 60)
   assert.equal(responseError(429, {}, '1.5').retryAfter, 2)
+})
+
+test('来源URL可以点击，HTML和脚本地址保持普通文本', () => {
+  const raw = '来源：https://weather.example/a?q=1。<script>alert(1)</script> javascript:alert(2)'
+  const parts = splitLinks(raw)
+  assert.deepEqual(parts.filter(p => p.url).map(p => p.url), ['https://weather.example/a?q=1'])
+  assert.equal(parts.map(p => p.text).join(''), raw)
 })

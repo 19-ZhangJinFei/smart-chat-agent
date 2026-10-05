@@ -1,6 +1,6 @@
 # 智聊——基于 LangChain 的智能客服系统
 
-个人课设：复现三课教程，实现FastAPI后端、Vue3界面、五工具、双库记忆、自动路由、SSE、限流、评估和Docker交付。订单、天气、优惠券为教学模拟数据。
+个人课设：复现三课教程，实现FastAPI后端、Vue3界面、五工具、双库记忆、自动路由、SSE、限流、评估和Docker交付。订单与优惠券为教学模拟数据；天气通过Tavily联网搜索及Open-Meteo气象接口查询。
 
 ## 本机启动
 
@@ -79,3 +79,9 @@ Docker验收会停启和重建本项目容器、生成备份。评估每题独�
 CI仅运行离线测试与前端构建，不配置真实Key。个人报告和代码包在本地忽略目录，需本人复核，答辩后经老师确认再提交。公开仓库排除个人身份信息、Key、运行数据库和课程原始附件。MIT许可只涵盖本仓库原创实现。
 
 模型配置参考[百炼OpenAI兼容接口](https://help.aliyun.com/zh/model-studio/qwen-api-via-openai-chat-completions)，智能体参考[LangChain Agents](https://docs.langchain.com/oss/python/langchain/agents)，构建环境参考[Vite](https://vite.dev/guide/)。
+
+## 联网天气
+
+在本机backend/.env填写TAVILY_API_KEY，WEATHER_TIMEOUT默认15秒，重建后端容器加载配置。自动或智能体模式调用get_weather：Tavily搜索当天相关来源，Open-Meteo按城市坐标提供当前气象模型数据及今日预报；回答附数据时间、查询时间及可点击来源。搜索网页可能过期，不能把检索时间等同于气象观测时间。密钥未配置、服务失败或城市不明时明确告知，不回退到固定天气样例。
+
+接口依据：[Tavily Search](https://docs.tavily.com/documentation/api-reference/endpoint/search)、[Open-Meteo](https://open-meteo.com/en/docs)、[城市定位](https://open-meteo.com/en/docs/geocoding-api)。订单及优惠券仍为教学模拟。
