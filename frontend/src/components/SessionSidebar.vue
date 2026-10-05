@@ -19,7 +19,7 @@ const emit = defineEmits(['create', 'select', 'rename', 'delete'])
       </div>
       <p v-if="!sessions.length" class="sidebar-empty">你的第一段对话<br />将从这里开始</p>
     </nav>
-    <div class="sidebar-note"><span class="status-dot"></span>记忆存储在本地数据库<p>教学项目 · 模拟业务数据</p></div>
+    <div class="sidebar-note"><span class="status-dot"></span>记忆存储在本地数据库<p>天气联网检索 · 订单及优惠券为模拟</p></div>
     <footer>智聊 SmartChat <span>v1.0</span></footer>
   </aside>
 </template>

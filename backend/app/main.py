@@ -100,7 +100,8 @@ def create_app(settings=None, model_service=None, agent_service=None):
 
     @app.get("/api/health", response_model=ApiResponse)
     def health():
-        return ok(status="ok", model_configured=bool(settings.api_key), model=settings.model)
+        return ok(status="ok", model_configured=bool(settings.api_key), model=settings.model,
+                  weather_configured=bool(settings.tavily_api_key), weather_provider="Tavily + Open-Meteo")
 
     @app.get("/", response_model=ApiResponse)
     def index():

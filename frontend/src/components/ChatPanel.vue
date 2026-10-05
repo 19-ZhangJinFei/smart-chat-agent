@@ -6,8 +6,9 @@ import { getMessages, sendChat, sendStream } from '../api/index.js'
 import { cooldown } from '../api/errors.js'
 import { beginTurn, settleTurn } from '../api/turn.js'
 import { useCooldown } from '../composables/useCooldown.js'
+import MessageText from './MessageText.vue'
 
-const props = defineProps({ sessionId: String, title: String, modelReady: Boolean })
+const props = defineProps({ sessionId: String, title: String, modelReady: Boolean, weatherReady: Boolean })
 const emit = defineEmits(['busy', 'complete'])
 const messages = ref([])
 const input = ref('')
@@ -98,7 +99,7 @@ function handleKey(event) {
   <section class="chat-panel">
     <header class="chat-header">
       <div><span class="eyebrow">SMARTCHAT / 对话</span><h2>{{ title }}</h2></div>
-      <span class="service-state"><span class="status-dot" :class="{ warning: !modelReady }"></span>{{ modelReady ? '模型已配置' : '模型待配置' }}</span>
+      <span class="service-state"><span class="status-dot" :class="{ warning: !modelReady }"></span>{{ modelReady ? '模型已配置' : '模型待配置' }} · {{ weatherReady ? '天气检索已配置' : '天气检索待配置' }}</span>
     </header>
     <div class="chat-toolbar">
       <el-radio-group v-model="mode" :disabled="loading" aria-label="对话模式">
@@ -124,7 +125,7 @@ function handleKey(event) {
         <div class="message-content"><div class="message-label">{{ message.role === 'user' ? '你' : '智聊助手' }}
           <span v-if="message.route" class="route-tag">{{ message.route === 'agent' ? '工具回答' : '普通回答' }}</span></div>
           <div v-if="message.tools_used?.length" class="tool-tags"><span v-for="tool in message.tools_used" :key="tool">⚙ {{ tool }}</span></div>
-          <div class="message-text" :class="{ incomplete: message.failed }">{{ message.content }}</div>
+          <MessageText :text="message.content" :class="{ incomplete: message.failed }" />
           <div v-if="loading && index === messages.length - 1 && !message.content" class="thinking"><el-icon class="is-loading"><Loading /></el-icon>正在处理你的问题…</div>
           <div v-if="message.failed" class="failed-message">{{ message.error }}
             <span>{{ message.notAccepted ? '本轮未生成回复，问题已保留。' : '本轮状态未确认，请先核对历史记录，再决定是否重新发送。' }}</span>
@@ -139,7 +140,7 @@ function handleKey(event) {
         aria-label="消息内容" placeholder="输入问题，Enter 发送，Shift+Enter 换行" :disabled="loading || historyLoading || !!historyError" @keydown="handleKey" />
         <el-button type="primary" :icon="Promotion" :loading="loading" :disabled="!input.trim() || historyLoading || !!historyError || retrySeconds > 0" aria-label="发送消息" @click="send()">{{ retrySeconds ? `等待 ${retrySeconds} 秒` : '发送' }}</el-button>
       </div>
-      <div class="composer-note"><span>订单、天气与优惠券为教学模拟数据，请勿用于真实业务决策</span><span>{{ input.length }} / 2000</span></div>
+      <div class="composer-note"><span>订单与优惠券为模拟数据；天气联网检索，请核对来源时间</span><span>{{ input.length }} / 2000</span></div>
     </footer>
   </section>
 </template>

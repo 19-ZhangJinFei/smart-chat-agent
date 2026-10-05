@@ -16,7 +16,6 @@ def test_invalid_calculation(expression):
 
 
 def test_fake_data_and_time():
-    assert "暂无模拟数据" in get_weather.invoke({"city": "太原"})
     assert "未找到" in query_order.invoke({"order_id": "wrong"})
     assert "已过期" in get_coupon.invoke({"code": "EXPIRED"})
     assert "教学模拟" in get_coupon.invoke({"code": "WELCOME10"})

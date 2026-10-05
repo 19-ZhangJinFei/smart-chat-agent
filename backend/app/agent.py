@@ -8,10 +8,13 @@ from langgraph.checkpoint.sqlite import SqliteSaver
 
 from app.config import SYSTEM_PROMPT
 from app.llm import close_model_clients, make_model, text_content, to_messages
-from app.tools import TOOLS
+from app.tools import build_tools
+from app.weather import weather_citations
 
 AGENT_RULE = ("订单、天气、计算、当前时间、优惠券请求必须调用对应工具；"
               "未知或格式异常的订单号也交给订单工具查询，禁止自行推断不存在。"
+              "除零或疑似无效的算式也必须先调用calculate，由工具判定错误，禁止直接拒绝计算。"
+              "天气工具是联网查询，不属于教学模拟数据；必须按本轮来源核对城市与日期，禁止复述历史天气当作当前天气。"
               "当前日期与时间必须严格依据本轮get_current_time返回值，禁止采用训练数据中的日期。"
               "时间工具和计算工具返回真实时钟与确定性计算结果，不属于模拟业务数据。"
               "其他问题正常回答，不为调用而调用。")
@@ -24,6 +27,7 @@ class ChatAgentState(AgentState):
 class AgentService:
     def __init__(self, settings, model=None, strict=True):
         self.settings, self.model, self.strict = settings, model, strict
+        self.tools = build_tools(settings)
         settings.agent_db_path.parent.mkdir(parents=True, exist_ok=True)
         self.conn = sqlite3.connect(settings.agent_db_path, check_same_thread=False, timeout=15)
         try:
@@ -45,7 +49,7 @@ class AgentService:
                     self._owned_model = make_model(self.settings, 0)
                 model = self._owned_model
             self._graph = create_agent(
-                model=model, tools=TOOLS,
+                model=model, tools=self.tools,
                 system_prompt=SYSTEM_PROMPT + (AGENT_RULE if self.strict else ""),
                 checkpointer=self.saver, state_schema=ChatAgentState)
         return self._graph
@@ -82,6 +86,9 @@ class AgentService:
                           and text_content(m.content).strip()), "")
             if not reply:
                 raise ValueError("智能体没有最终正文")
+            citations = weather_citations(current)
+            if citations:
+                reply += '\n\n' + citations
             return {"reply": reply, "tools_used": list(dict.fromkeys(calls))}
         except BaseException:
             self.clear(session_id)

@@ -11,6 +11,7 @@ const activeId = ref('')
 const busy = ref(false)
 const connecting = ref(true)
 const modelReady = ref(false)
+const weatherReady = ref(false)
 const connectionError = ref('')
 const retrySeconds = useCooldown()
 
@@ -28,6 +29,7 @@ async function initialize() {
   try {
     const status = await health()
     modelReady.value = status.model_configured
+    weatherReady.value = status.weather_configured
     await refresh()
     const remembered = localStorage.getItem('smartchat-active')
     select(sessions.value.find(s => s.id === remembered)?.id || sessions.value[0]?.id || '')
@@ -87,13 +89,13 @@ function afterMessage(session) {
       </div>
       <div v-else-if="connecting" class="welcome"><span class="eyebrow">SMARTCHAT</span><h1>正在连接智聊</h1></div>
       <ChatPanel v-else-if="activeId" :key="activeId" :session-id="activeId"
-        :title="sessions.find(s => s.id === activeId)?.title || '新对话'" :model-ready="modelReady"
+        :title="sessions.find(s => s.id === activeId)?.title || '新对话'" :model-ready="modelReady" :weather-ready="weatherReady"
         @busy="busy = $event" @complete="afterMessage" />
       <div v-else class="welcome">
         <span class="brand-orb">聊</span><span class="eyebrow">你的电商客服助手</span>
         <h1>从一个问题开始</h1><p>查订单、了解天气、精确计算，<br />让每一段对话都有记忆。</p>
         <el-button type="primary" size="large" @click="create">开始新对话</el-button>
-        <small>订单、天气与优惠券为教学模拟数据</small>
+        <small>订单与优惠券为模拟数据；天气联网检索，以来源为准</small>
       </div>
     </main>
   </div>

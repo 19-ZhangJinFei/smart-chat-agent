@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-06",
+  "environment": "real qwen-plus + Tavily + Open-Meteo in isolated temporary databases",
+  "source_file": "private weather-agent-live.json; original false-negative assertions retained in private weather-agent-live-first.json",
+  "results": [
+    {
+      "question": "请你计算1/0",
+      "status": 200,
+      "tools_used": [
+        "calculate"
+      ],
+      "passed": true
+    },
+    {
+      "question": "北京现在天气怎么样？请说明数据时间",
+      "status": 200,
+      "tools_used": [
+        "get_weather"
+      ],
+      "passed": true
+    },
+    {
+      "question": "太原现在天气怎么样？",
+      "status": 200,
+      "tools_used": [
+        "get_weather"
+      ],
+      "passed": true
+    }
+  ],
+  "notes": [
+    "Correction of verifier: 非教学模拟 is a correct negative description, not a claim of simulated data.",
+    "A first reply used 观测时间; prompt was tightened to 模型数据时间. Final Docker verification is separate."
+  ]
+}
