@@ -28,11 +28,30 @@ def make_model(settings, temperature=0.7):
                       timeout=settings.timeout, max_retries=1)
 
 
+async def close_model_clients(model):
+    """释放LangChain持有的同步和异步OpenAI连接池，不触发模型请求。"""
+    if model is None:
+        return
+    try:
+        model.root_client.close()
+    finally:
+        await model.root_async_client.close()
+
+
 class ModelService:
     def __init__(self, settings):
         self.settings = settings
         self._model = None
         self._router = None
+        self._router_model = None
+
+    async def aclose(self):
+        model, router_model = self._model, self._router_model
+        self._model = self._router = self._router_model = None
+        try:
+            await close_model_clients(model)
+        finally:
+            await close_model_clients(router_model)
 
     @property
     def model(self):
@@ -58,7 +77,9 @@ class ModelService:
 
     def classify(self, message, history):
         if self._router is None:
-            self._router = make_model(self.settings, 0).with_structured_output(
+            if self._router_model is None:
+                self._router_model = make_model(self.settings, 0)
+            self._router = self._router_model.with_structured_output(
                 Intent, method="function_calling")
         result = self._router.invoke([
             SystemMessage(content="你是意图分类器。闲聊/知识/写作为chat；订单、天气、"

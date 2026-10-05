@@ -2,10 +2,42 @@
   "date": "2026-10-05",
   "url": "http://127.0.0.1:8081/",
   "checks": [
-    {"scenario": "组合输入Enter", "method": "浏览器textarea分发isComposing=true的keydown", "observed": "问题仍在输入框，无消息发送", "passed": true},
-    {"scenario": "生成互斥", "method": "真实普通流式请求", "observed": "生成期间新建、选择、改名、删除和模式切换禁用", "passed": true},
-    {"scenario": "网络故障", "method": "精确URL拦截POST /api/chat/stream并abort", "observed": "中文网络错误、未确认完成提示、问题保留和重试按钮", "passed": true},
-    {"scenario": "恢复后重试", "method": "解除精确URL拦截，点击重试，真实模型与数据库", "observed": "回答完成后失败消息清除，输入清空，刷新后已完成问答存在", "passed": true}
+    {
+      "scenario": "组合输入Enter",
+      "method": "浏览器textarea分发isComposing=true的keydown",
+      "observed": "问题仍在输入框，无消息发送",
+      "passed": true
+    },
+    {
+      "scenario": "生成互斥",
+      "method": "真实普通流式请求",
+      "observed": "生成期间新建、选择、改名、删除和模式切换禁用",
+      "passed": true
+    },
+    {
+      "scenario": "网络故障",
+      "method": "精确URL拦截POST /api/chat/stream并abort",
+      "observed": "中文网络错误、未确认完成提示、问题保留和重试按钮",
+      "passed": true
+    },
+    {
+      "scenario": "恢复后重试",
+      "method": "解除精确URL拦截，点击重试，真实模型与数据库",
+      "observed": "回答完成后失败消息清除，输入清空，刷新后已完成问答存在",
+      "passed": true
+    },
+    {
+      "scenario": "Shift+Enter换行",
+      "method": "浏览器实际键盘输入",
+      "observed": "输入值末尾新增换行，消息数仍为0",
+      "passed": true
+    },
+    {
+      "scenario": "Enter发送",
+      "method": "普通模式实际按Enter发送你好",
+      "observed": "流式回答完成、输入清空、生成期间侧栏禁用",
+      "passed": true
+    }
   ],
   "limitations": "组合事件为合成输入法事件；网络故障为浏览器注入，不能称为百炼真实故障。第一次通配URL拦截未生效，请求成功，不计入故障验收。"
 }

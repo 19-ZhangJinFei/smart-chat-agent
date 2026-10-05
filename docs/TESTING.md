@@ -4,7 +4,7 @@
 
 | 验证层 | 当次结果 | 证据 |
 |---|---|---|
-| 后端离线 | 29通过 | pytest，包括TCP断流、上下文窗口与落库失败恢复 |
+| 后端离线 | 32通过 | Windows及Linux pytest，含SDK资源关闭、启动失败、TCP断流、上下文与落库失败恢复 |
 | 依赖 | 无冲突 | pip check |
 | 前端解析 | 4通过 | npm test，UTF-8/跨块/CRLF/错误 |
 | 前端构建 | 通过 | npm run build，JS约252KB |
@@ -16,7 +16,9 @@
 | Docker验收 | 全部13项通过 | docker-acceptance.json |
 | 浏览器 | 会话/模式/流式/改名/刷新/删除通过 | frontend与docker-browser截图 |
 
-续查补充：中文输入法组合Enter不发送；精确URL拦截制造网络故障后，中文错误提示、原问题保留、解除拦截后重试成功。故障注入与真实模型调用分别标记，浏览器证据见browser-boundaries.json与browser-error.png。Docker Desktop的过期运行socket修复后，两服务健康且8081真实流式再次验证。
+续查补充：中文输入法组合Enter不发送；精确URL拦截制造网络故障后，中文错误提示、原问题保留、解除拦截后重试成功。故障注入与真实模型调用分别标记，浏览器证据见browser-boundaries.json与browser-error.png。Docker Desktop的过期运行socket修复后，后端healthy、前端运行且8081真实流式再次验证。
+
+Linux补充验证：独立Python3.11-slim临时容器中安装固定开发依赖，pip check无冲突、后端32项通过；Node22-alpine临时容器中前端4项通过。容器不挂载真实.env、运行数据库或个人报告，测试不调用模型。该结果属于本机跨平台验证，GitHub云端CI仍未通过。
 
 ## 问题与修正
 

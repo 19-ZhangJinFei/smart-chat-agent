@@ -44,15 +44,25 @@ def create_app(settings=None, model_service=None, agent_service=None):
 
     @asynccontextmanager
     async def lifespan(app):
-        database.initialize()
-        if app.state.agent is None:
-            from app.agent import AgentService
-            app.state.agent = AgentService(settings)
         try:
+            database.initialize()
+            if app.state.agent is None:
+                from app.agent import AgentService
+                app.state.agent = AgentService(settings)
             yield
         finally:
-            app.state.agent.close()
-            database.close()
+            try:
+                if app.state.agent is not None:
+                    if hasattr(app.state.agent, "aclose"):
+                        await app.state.agent.aclose()
+                    else:
+                        app.state.agent.close()
+            finally:
+                try:
+                    if hasattr(models, "aclose"):
+                        await models.aclose()
+                finally:
+                    database.close()
 
     app = FastAPI(title="智聊助手 API", version="1.0.0", lifespan=lifespan)
     app.state.database = database
