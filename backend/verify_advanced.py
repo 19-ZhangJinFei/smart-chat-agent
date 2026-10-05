@@ -10,9 +10,10 @@ from app.agent import AgentService
 from app.config import Settings
 
 if __name__ == "__main__":
-    future = (datetime.now(ZoneInfo("Asia/Shanghai")) + timedelta(days=30)).date().isoformat()
+    current = datetime.now(ZoneInfo("Asia/Shanghai"))
+    future = (current + timedelta(days=30)).date().isoformat()
     cases = [
-        ("查订单DD20240001，如果已发货则查询当前北京时间，否则只说明订单状态。", {"query_order", "get_current_time"}, "2026"),
+        ("查订单DD20240001，如果已发货则查询当前北京时间，否则只说明订单状态。", {"query_order", "get_current_time"}, str(current.year)),
         (f"查询当前日期，再算从今天到{future}有多少天，按日期整天计算。", {"get_current_time", "calculate"}, "30"),
     ]
     rows = []
