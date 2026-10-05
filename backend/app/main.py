@@ -146,15 +146,15 @@ def create_app(settings=None, model_service=None, agent_service=None):
                 reply = models.chat(req.message, history)
             except Exception as exc:
                 raise service_error(exc) from exc
-            memory.append_turn(db, req.session_id, req.message, reply, "chat")
-            return ok(reply=reply)
+            saved = memory.append_turn(db, req.session_id, req.message, reply, "chat")
+            return ok(reply=reply, **saved)
 
     def run_agent(req, db, history):
         session = memory.require_session(db, req.session_id)
         try:
             result = app.state.agent.chat(req.message, req.session_id, history, session.history_version)
-            memory.append_turn(db, req.session_id, req.message, result["reply"], "agent", result["tools_used"])
-            return result
+            saved = memory.append_turn(db, req.session_id, req.message, result["reply"], "agent", result["tools_used"])
+            return {**result, **saved}
         except Exception as exc:
             db.rollback()
             app.state.agent.clear(req.session_id)
@@ -180,8 +180,8 @@ def create_app(settings=None, model_service=None, agent_service=None):
                 reply = models.chat(req.message, history)
             except Exception as exc:
                 raise service_error(exc) from exc
-            memory.append_turn(db, req.session_id, req.message, reply, "chat")
-            return ok(route="chat", reply=reply, tools_used=[])
+            saved = memory.append_turn(db, req.session_id, req.message, reply, "chat")
+            return ok(route="chat", reply=reply, tools_used=[], **saved)
 
     @app.post("/api/chat/stream")
     async def stream(req: ChatRequest, request: Request):
@@ -211,7 +211,8 @@ def create_app(settings=None, model_service=None, agent_service=None):
                 if await request.is_disconnected():
                     return
                 with database.sessions() as db:
-                    memory.append_turn(db, req.session_id, req.message, reply, "chat")
+                    saved = memory.append_turn(db, req.session_id, req.message, reply, "chat")
+                yield "data: " + json.dumps(jsonable_encoder({"saved": saved}), ensure_ascii=False) + "\n\n"
                 yield "data: [DONE]\n\n"
             except Exception as exc:
                 error = service_error(exc)

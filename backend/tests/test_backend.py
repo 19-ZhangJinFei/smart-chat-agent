@@ -11,6 +11,9 @@ def test_crud_and_memory_isolation(client):
     assert client.patch(f"/api/sessions/{first}", json={"title": "  自定义标题  "}).status_code == 200
     response = client.post("/api/chat", json={"session_id": first, "message": "我叫小明"})
     assert response.status_code == 200
+    saved = response.json()["data"]
+    assert saved["session"]["id"] == first and saved["session"]["history_version"] == 1
+    assert saved["messages"] == client.get(f"/api/sessions/{first}/messages").json()["data"]["messages"]
     response = client.post("/api/chat", json={"session_id": first, "message": "姓名？"})
     assert "我叫小明" in response.json()["data"]["reply"]
     response = client.post("/api/chat", json={"session_id": second, "message": "姓名？"})

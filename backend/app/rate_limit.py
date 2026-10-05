@@ -36,7 +36,7 @@ class RateLimitMiddleware:
             ip = scope.get("client", ("unknown", 0))[0]
             retry = self.limiter.check(ip)
             if retry:
-                body = json.dumps({"code": 429, "message": "请求过于频繁，请稍后再试", "data": {}},
+                body = json.dumps({"code": 429, "message": "请求过于频繁，请稍后再试", "data": {"retry_after": retry}},
                                   ensure_ascii=False).encode()
                 await send({"type": "http.response.start", "status": 429, "headers": [
                     (b"content-type", b"application/json; charset=utf-8"),
