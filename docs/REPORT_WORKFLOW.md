@@ -20,7 +20,7 @@ python scripts/apply_school_template.py --reference artifacts/private/reference.
 python scripts/import_word_toc.py --source artifacts/private/report.docx --refreshed artifacts/private/word-refreshed.docx --output artifacts/private/report-final.docx
 ```
 
-模板原样式节点与未编辑ZIP部件保留，新增图片、目录和正文属于计划中的填写内容。模板模式仅用LibreOffice渲染，不经其保存。Word更新后的完整副本不直接作为交付件，以免无关部件被整体重写。
+模板原样式节点与未编辑ZIP部件保留，新增图片、目录和正文属于计划中的填写内容。优先使用独立文档工具渲染；本机工具因缺少 soffice.exe 无法运行时，可用独立 Word 副本导出 PDF，再用 pypdfium2 渲染全部页。refresh_report_fields.ps1 的 PdfOutput 参数用于这一导出；脚本只关闭其独立创建的 Word 进程。LibreOffice 渲染时不经其保存。Word更新后的完整副本不直接作为交付件，以免无关部件被整体重写。
 
 已核对版本共20页：封面、目录各1页，七章正文17页、参考文献1页；全部30个原生目录页码与Word书签位置一致。不同机器字体、打印机及Office版本可能影响分页，本人最终编辑后应在提交机器更新域并重新检查。
 

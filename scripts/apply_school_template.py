@@ -187,6 +187,8 @@ def apply(reference, content, profile, output):
                 indent = props.find("w:ind", NS)
                 if indent is not None:
                     indent.set(tag("firstLineChars"), "200")
+                if value.startswith("关键代码："):
+                    E.SubElement(props, tag("keepNext"))
                 if value.startswith(("实现思路：", "关键代码：", "运行效果：")):
                     if indent is not None:
                         indent.set(tag("firstLine"), "0")

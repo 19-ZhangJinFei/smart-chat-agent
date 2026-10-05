@@ -1,0 +1,217 @@
+{
+  "run_id": "5c8c45a4174d4eafb3e25324f4e67792",
+  "timestamp": "2026-10-06T02:27:37.291270+08:00",
+  "model": "qwen-plus",
+  "course_correct": 10,
+  "course_total": 10,
+  "course_accuracy": 1.0,
+  "rows": [
+    {
+      "question": "订单DD20240001到哪了？",
+      "expected": [
+        "query_order"
+      ],
+      "actual": [
+        "query_order"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "订单DD20240001（教学模拟）已发货，由顺丰速运承运，预计明日18:00前送达。",
+      "index": 0,
+      "group": "course",
+      "seconds": 3.406
+    },
+    {
+      "question": "我的订单DD20240003签收了吗",
+      "expected": [
+        "query_order"
+      ],
+      "actual": [
+        "query_order"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "您的订单 DD20240003 已签收，签收时间为 2026-09-18 14:32（教学模拟数据）。",
+      "index": 1,
+      "group": "course",
+      "seconds": 2.453
+    },
+    {
+      "question": "长沙今天天气怎么样？",
+      "expected": [
+        "get_weather"
+      ],
+      "actual": [
+        "get_weather"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "联网搜索没有返回可用天气来源，无法确认长沙当前天气；请补充省份（如湖南长沙）或稍后再试。",
+      "index": 2,
+      "group": "course",
+      "seconds": 9.156
+    },
+    {
+      "question": "北京会下雨吗？要不要带伞",
+      "expected": [
+        "get_weather"
+      ],
+      "actual": [
+        "get_weather"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "根据Open-Meteo气象模型数据（**数据时间：2026-10-06T02:15:00+08:00，地点：中国 北京市 北京**）：\n\n- 当前天气：**晴**  \n- 降水量：**0.0 mm**  \n- 今日降水概率最大值：**0%**  \n\n✅ **北京今天不会下雨，无需带伞。**  \n温馨提示：昼夜温差较大（预报最低13.3°C，最高25.4°C），建议早晚适当添衣。\n\n天气查询来源（北京；联网查询时间：2026-10-06T02:26:49.687500+08:00）\nOpen-Meteo 当前天气与今日预报：https://api.open-meteo.com/v1/forecast?latitude=39.9075&longitude=116.39723&timezone=Asia%2FShanghai&forecast_days=1&current=temperature_2m%2Crelative_humidity_2m%2Capparent_temperature%2Cprecipitation%2Cweather_code%2Cwind_speed_10m&daily=temperature_2m_max%2Ctemperature_2m_min%2Cprecipitation_probability_max",
+      "index": 3,
+      "group": "course",
+      "seconds": 8.672
+    },
+    {
+      "question": "计算1234*5678等于多少",
+      "expected": [
+        "calculate"
+      ],
+      "actual": [
+        "calculate"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "1234 × 5678 = 7,006,652",
+      "index": 4,
+      "group": "course",
+      "seconds": 1.906
+    },
+    {
+      "question": "3.5乘以12是多少",
+      "expected": [
+        "calculate"
+      ],
+      "actual": [
+        "calculate"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "3.5 乘以 12 等于 42。",
+      "index": 5,
+      "group": "course",
+      "seconds": 1.75
+    },
+    {
+      "question": "现在几点了？",
+      "expected": [
+        "get_current_time"
+      ],
+      "actual": [
+        "get_current_time"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "现在是北京时间 2026年10月06日 02:27。",
+      "index": 6,
+      "group": "course",
+      "seconds": 1.719
+    },
+    {
+      "question": "今天几号？",
+      "expected": [
+        "get_current_time"
+      ],
+      "actual": [
+        "get_current_time"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "今天是2026年10月6日，星期一，北京时间02:27。",
+      "index": 7,
+      "group": "course",
+      "seconds": 1.735
+    },
+    {
+      "question": "用一句话介绍你自己",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "exact_match": true,
+      "reply": "我是「智聊」，电商智能客服，能帮您查询订单、优惠券、天气和时间，或进行精确计算，所有业务数据均为教学模拟，天气信息则实时联网获取。",
+      "index": 8,
+      "group": "course",
+      "seconds": 1.39
+    },
+    {
+      "question": "Python和Java的区别是什么",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "exact_match": true,
+      "reply": "Python 和 Java 是两种主流编程语言，主要区别如下：\n\n- **语法风格**：Python 语法简洁、强调缩进和可读性，适合快速开发与初学者；Java 语法更严谨，需显式声明类型、使用大括号和分号，代码量通常更多。\n\n- **执行方式**：Python 是解释型语言（通常通过 CPython 解释执行）；Java 是编译型语言，源码先编译为字节码（.class），再由 JVM 解释或即时编译（JIT）执行。\n\n- **类型系统**：Python 是动态类型（变量类型在运行时确定）；Java 是静态类型（变量类型在编译时声明并检查）。\n\n- **内存管理**：两者均支持自动垃圾回收（GC），但 Java 的 GC 策略更丰富（如 G1、ZGC），可控性更强；Python 主要依赖引用计数 + 循环检测。\n\n- **应用场景**：  \n  - Python 常用于数据分析（Pandas）、AI/ML（TensorFlow/PyTorch）、脚本自动化、Web 后端（Django/Flask）；  \n  - Java 广泛用于企业级应用（Spring）、Android 原生开发、高并发服务、金融系统等。\n\n- **生态与性能**：Java 通常执行效率更高、启动慢但运行稳定；Python 开发效率高，但 CPU 密集型任务常需借助 C 扩展（如 NumPy）或转用其他语言优化。\n\n如需对比某一方面（如多线程、Web 框架或学习路径），欢迎进一步说明 😊",
+      "index": 9,
+      "group": "course",
+      "seconds": 8.391
+    },
+    {
+      "question": "WELCOME10优惠券能用吗？",
+      "expected": [
+        "get_coupon"
+      ],
+      "actual": [
+        "get_coupon"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "WELCOME10 是教学模拟优惠券，当前状态为**可用**，享受**九折**优惠，适用条件为：**新用户且订单金额满100元**。",
+      "index": 10,
+      "group": "extra",
+      "seconds": 2.297
+    },
+    {
+      "question": "现在几点？顺便算365*24*60，一年有多少分钟？",
+      "expected": [
+        "calculate",
+        "get_current_time"
+      ],
+      "actual": [
+        "calculate",
+        "get_current_time"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "当前北京时间是：2026年10月06日 02:27:17。  \n一年（365天）共有 **525,600 分钟**。",
+      "index": 11,
+      "group": "extra",
+      "seconds": 2.89
+    },
+    {
+      "question": "订单NOTFOUND是什么状态？",
+      "expected": [
+        "query_order"
+      ],
+      "actual": [
+        "query_order"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "经查询，订单号“NOTFOUND”在教学模拟系统中**未找到**，可能原因包括：\n\n- 订单号输入有误（如字母大小写、空格或符号错误）；\n- 该订单尚未生成或不属于教学模拟数据范围；\n- 属于其他系统或真实订单（本工具仅支持教学模拟订单查询）。\n\n如您有正确的订单号（例如 DD20240001 格式），欢迎提供，我将立即为您查询。",
+      "index": 12,
+      "group": "extra",
+      "seconds": 4.203
+    },
+    {
+      "question": "太原天气怎么样？",
+      "expected": [
+        "get_weather"
+      ],
+      "actual": [
+        "get_weather"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "太原今日天气（数据时间：2026-10-06T02:15:00+08:00）：  \n- 当前气温：9.2℃，体感温度约7.0℃  \n- 天气状况：晴  \n- 相对湿度：57%  \n- 无降水（降水量 0.0 mm）  \n- 风速：1.7 km/h  \n\n今日预报：  \n- 最高气温：22.4℃  \n- 最低气温：7.5℃  \n- 降水概率最高：0%  \n\n温馨提示：天气晴好，适宜出行与发货。  \n（注：以上为联网获取的气象模型数据，非本地模拟样例）\n\n天气查询来源（太原；联网查询时间：2026-10-06T02:27:24.557785+08:00）\nOpen-Meteo 当前天气与今日预报：https://api.open-meteo.com/v1/forecast?latitude=37.86944&longitude=112.56028&timezone=Asia%2FShanghai&forecast_days=1&current=temperature_2m%2Crelative_humidity_2m%2Capparent_temperature%2Cprecipitation%2Cweather_code%2Cwind_speed_10m&daily=temperature_2m_max%2Ctemperature_2m_min%2Cprecipitation_probability_max",
+      "index": 13,
+      "group": "extra",
+      "seconds": 13.625
+    }
+  ],
+  "source_commit": "2480010d52a45433ba9fc22bb0370e5ec7772c50",
+  "weather_provider": "Tavily + Open-Meteo",
+  "scope": "10 course cases and 4 supplemental cases, independent threads; tool-selection metric, not universal answer accuracy"
+}
