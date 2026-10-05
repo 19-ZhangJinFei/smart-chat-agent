@@ -81,7 +81,7 @@ class WeatherSearch:
                 url, content = row.get('url'), row.get('content')
                 if not isinstance(url, str) or not isinstance(content, str) or not content.strip():
                     continue
-                # 搜索引擎可能返回异地页面，只保留提及所查城市的摘要。
+                # 搜索引擎可能返回异地页面，只保留目标城市的标题。
                 # 全国页面摘要的导航栏可能包含北京等城市名；要求标题明确属于目标城市。
                 if lookup_city.casefold() not in str(row.get('title', '')).casefold():
                     continue
@@ -112,18 +112,27 @@ class WeatherSearch:
         region = next((name for name in REGIONS if city.startswith(name) and len(city) > len(name)), '')
         name = city[len(region):].removeprefix('省').removeprefix('市').strip() if region else city
         name = name.removesuffix('市')
-        response = client.get('https://geocoding-api.open-meteo.com/v1/search',
-            params={'name': name, 'count': 5, 'language': 'zh', 'format': 'json'})
-        response.raise_for_status()
-        candidates = response.json().get('results', [])
-        matches = [row for row in candidates if isinstance(row, dict)
-                   and str(row.get('name', '')).removesuffix('市').casefold() == name.casefold()
-                   and (not region or region.removesuffix('市') in str(row.get('admin1', '')))]
-        if not matches:
-            raise ValueError('无法确定城市位置')
-        place = matches[0]
-        if len(matches) > 1 and place.get('feature_code') not in ('PPLC','PPLA'):
+        def find_places(query):
+            response = client.get('https://geocoding-api.open-meteo.com/v1/search',
+                params={'name': query, 'count': 5, 'language': 'zh', 'format': 'json'})
+            response.raise_for_status()
+            return [row for row in response.json().get('results', []) if isinstance(row, dict)
+                    and str(row.get('name', '')).removesuffix('市').casefold() == name.casefold()
+                    and (not region or region.removesuffix('市') in str(row.get('admin1', '')))]
+        matches = find_places(name)
+        capitals = [row for row in matches if row.get('feature_code') in ('PPLC', 'PPLA')]
+        # 中文短名可能只返回同名小镇；补查正式市名，仍校验名称和省份，不写死坐标。
+        if not capitals and re.fullmatch(r'[\u3400-\u9fff]+', name):
+            formal = find_places(name + '市')
+            capitals = [row for row in formal if row.get('feature_code') in ('PPLC', 'PPLA')]
+        if len(capitals) == 1:
+            place = capitals[0]
+        elif len(capitals) > 1 or len(matches) > 1:
             raise ValueError('城市名存在歧义，请补充省份或国家')
+        elif matches:
+            place = matches[0]
+        else:
+            raise ValueError('无法确定城市位置')
         latitude, longitude = float(place['latitude']), float(place['longitude'])
         if not math.isfinite(latitude) or not math.isfinite(longitude) or not (-90 <= latitude <= 90 and -180 <= longitude <= 180):
             raise ValueError('位置坐标无效')

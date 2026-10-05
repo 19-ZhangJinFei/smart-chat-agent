@@ -131,3 +131,22 @@ def test_weather_setting_environment_overrides_local_file(monkeypatch):
     monkeypatch.setenv('WEATHER_TIMEOUT','9')
     settings = Settings.load()
     assert settings.tavily_api_key == 'tvly-offline-env' and settings.weather_timeout == 9
+
+
+def test_chinese_short_name_retries_formal_city_without_selecting_same_named_town():
+    def handler(request):
+        if request.url.host == 'geocoding-api.open-meteo.com':
+            if request.url.params['name'] == '长沙':
+                return httpx.Response(200,json={'results':[
+                    {'name':'长沙','admin1':'重庆市','feature_code':'PPLA4','latitude':31,'longitude':108},
+                    {'name':'长沙','admin1':'贵州','feature_code':'PPLA4','latitude':28.6,'longitude':106},
+                ]})
+            assert request.url.params['name'] == '长沙市'
+            return httpx.Response(200,json={'results':[
+                {'name':'长沙市','country':'中国','admin1':'湖南','feature_code':'PPLA','latitude':28.2,'longitude':112.97},
+            ]})
+        return fake_weather(request)
+    result=json.loads(service(handler).search('长沙'))
+    assert result['status']=='ok'
+    assert result['current_weather']['location']=='中国 湖南 长沙市'
+    assert result['current_weather']['longitude']==112.97
