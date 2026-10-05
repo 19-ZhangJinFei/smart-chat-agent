@@ -19,9 +19,15 @@ export const sendChat = (mode, message, id) => request.post({
 }[mode], { message, session_id: id })
 
 export async function sendStream(message, id, onDelta, signal) {
-  const response = await fetch('/api/chat/stream', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message, session_id: id }), signal,
-  })
-  await consumeSSE(response, onDelta)
+  try {
+    const response = await fetch('/api/chat/stream', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, session_id: id }), signal,
+    })
+    await consumeSSE(response, onDelta)
+  } catch (error) {
+    if (error instanceof TypeError) throw new Error('网络连接中断，请检查服务和网络后重试')
+    if (error instanceof SyntaxError) throw new Error('流式响应格式异常，请刷新记录后重试')
+    throw error
+  }
 }

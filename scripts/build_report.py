@@ -16,12 +16,21 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def explicit_fonts(properties, chinese, western):
+    """清除默认主题字体，避免Word/渲染器覆盖学校指定字体。"""
+    fonts = properties.get_or_add_rFonts()
+    for attribute in ["asciiTheme", "hAnsiTheme", "eastAsiaTheme", "cstheme"]:
+        fonts.attrib.pop(qn(f"w:{attribute}"), None)
+    for attribute, value in [("ascii", western), ("hAnsi", western), ("eastAsia", chinese)]:
+        fonts.set(qn(f"w:{attribute}"), value)
+
+
 def font(run, chinese="宋体", western="Times New Roman", size=12, bold=False):
     run.font.name = western
     run.font.size = Pt(size)
     run.font.bold = bold
     run.font.color.rgb = RGBColor(0, 0, 0)
-    run._element.get_or_add_rPr().get_or_add_rFonts().set(qn("w:eastAsia"), chinese)
+    explicit_fonts(run._element.get_or_add_rPr(), chinese, western)
 
 
 def field(paragraph, instruction, cached="1"):
@@ -71,7 +80,7 @@ def build(profile, output):
     section.header_distance = section.footer_distance = Cm(1.27)
     normal = document.styles["Normal"]
     normal.font.name, normal.font.size = "Times New Roman", Pt(12)
-    normal._element.get_or_add_rPr().get_or_add_rFonts().set(qn("w:eastAsia"), "宋体")
+    explicit_fonts(normal._element.get_or_add_rPr(), "宋体", "Times New Roman")
     fmt = normal.paragraph_format
     fmt.line_spacing, fmt.space_after, fmt.first_line_indent = 1.5, Pt(6), Pt(24)
     fmt.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
@@ -81,7 +90,8 @@ def build(profile, output):
         style = document.styles[f"Heading {level}"]
         style.font.name, style.font.size, style.font.bold = "Arial", Pt(size), True
         style.font.color.rgb = RGBColor(0,0,0)
-        style._element.get_or_add_rPr().get_or_add_rFonts().set(qn("w:eastAsia"), "黑体")
+        explicit_fonts(style._element.get_or_add_rPr(), "黑体", "Arial")
+        explicit_fonts(document.styles[f"Heading {level} Char"]._element.get_or_add_rPr(), "黑体", "Arial")
         sf = style.paragraph_format
         sf.first_line_indent, sf.line_spacing = Pt(0), 1.0
         sf.space_before, sf.space_after, sf.keep_with_next = Pt(before), Pt(after), True
