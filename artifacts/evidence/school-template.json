@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-05",
+  "total_pages": 20,
+  "body_pages": 17,
+  "reference_pages": 1,
+  "chapters": 7,
+  "tables": 10,
+  "figures": 3,
+  "toc_entries_verified_in_word": 30,
+  "preserved_package_parts": 17,
+  "existing_template_style_nodes_preserved": true,
+  "original_sha256": "14ff497b9268550537f4f9150c1431538ac953a971e94bb26ad27d8312cd026c",
+  "placeholder_free": true,
+  "word_and_render_chapter_pages_equal": true,
+  "blank_page_fix_verified": true,
+  "visual_review": "20页；最后增补后前14页像素一致，重新检查第15–20页",
+  "backend_tests": 32,
+  "frontend_tests": 4,
+  "docker_checks": 13,
+  "personal_review": "pending",
+  "ci": "blocked_by_account_billing"
+}
