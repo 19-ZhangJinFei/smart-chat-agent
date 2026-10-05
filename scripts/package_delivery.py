@@ -57,9 +57,15 @@ def package(profile_path, private_dir, env_path):
             target = code_dir.joinpath(*PurePosixPath(entry.filename).parts)
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(source.read(entry))
+    report_hash = hashlib.sha256(report.read_bytes()).hexdigest()
+    qa_path = private_dir / "report-qa.json"
+    qa = json.loads(qa_path.read_text(encoding="utf-8")) if qa_path.is_file() else {}
+    template_verified = (qa.get("school_original_template") == "verified"
+                         and qa.get("report_sha256") == report_hash)
     manifest = {"commit": commit, "files": hashes,
-                "report_sha256": hashlib.sha256(report.read_bytes()).hexdigest(),
-                "school_template_review": "pending", "personal_rehearsal": "pending"}
+                "report_sha256": report_hash,
+                "school_template_review": "verified" if template_verified else "pending",
+                "personal_rehearsal": "pending"}
     (private_dir / "delivery-manifest.json").write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"代码包已导出：{len(hashes)}个受版本管理文件，密钥与身份扫描通过，提交{commit[:7]}")
