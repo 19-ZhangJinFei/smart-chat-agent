@@ -118,7 +118,7 @@ def test_citations_use_actual_tool_result_and_reject_invalid_urls():
 def test_unrelated_city_search_results_do_not_become_weather_sources():
     def handler(request):
         if request.url.host == 'api.tavily.com':
-            return httpx.Response(200,json={'results':[{'title':'重庆天气', 'url':'https://weather.example/chongqing', 'content':'重庆晴'}]})
+            return httpx.Response(200,json={'results':[{'title':'重庆天气', 'url':'https://weather.example/chongqing', 'content':'重庆晴。导航：北京天气 上海天气'}]})
         return fake_weather(request)
     result = json.loads(service(handler).search('北京'))
     assert len(result['sources']) == 1
