@@ -82,7 +82,8 @@ class WeatherSearch:
                 if not isinstance(url, str) or not isinstance(content, str) or not content.strip():
                     continue
                 # 搜索引擎可能返回异地页面，只保留提及所查城市的摘要。
-                if lookup_city.casefold() not in (str(row.get('title', '')) + ' ' + content).casefold():
+                # 全国页面摘要的导航栏可能包含北京等城市名；要求标题明确属于目标城市。
+                if lookup_city.casefold() not in str(row.get('title', '')).casefold():
                     continue
                 try:
                     parsed = urlsplit(url)
@@ -98,7 +99,7 @@ class WeatherSearch:
             result = {'status': 'ok', 'city': city, 'queried_at': now.isoformat(),
                       'date_requested': now.strftime('%Y-%m-%d'), 'sources': sources,
                       'current_weather': current_weather, 'current_weather_error': weather_error,
-                      'notice': '气温和当前天气优先使用current_weather气象模型数据，使用“数据时间”，禁止称为“观测时间”或实测。网页摘要仅作为补充，核对城市与适用日期；不明或过期时明确无法确认。查询时间不是数据时间。'}
+                      'notice': '气温和当前天气优先使用current_weather气象模型数据，使用“数据时间”，禁止称为“观测时间”或实测。网页摘要仅作为补充，核对城市与适用日期；不明或过期时明确无法确认。查询时间不是数据时间。没有目标城市当前预警资料时，应说明未查询到，禁止断言当地没有预警。'}
             return json.dumps(result, ensure_ascii=False).replace(key, '[已隐藏]')
         except httpx.TimeoutException:
             return failed('天气联网搜索超时，无法确认当前天气，请稍后再试')
