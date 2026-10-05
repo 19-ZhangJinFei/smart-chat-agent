@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-05",
+  "results": [
+    {
+      "path": "/api/chat",
+      "passed": true,
+      "response": {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "reply": "好的，小明！已记住您的名字。如有任何订单、优惠券或天气相关问题，我会为您及时解答（注：天气及优惠券信息为教学模拟数据）。😊"
+        }
+      }
+    },
+    {
+      "path": "/api/smart/chat",
+      "passed": true,
+      "response": {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "route": "chat",
+          "reply": "你好，小明！很高兴为您服务～😊  \n如有订单查询、优惠券使用或天气咨询（教学模拟数据），欢迎随时告诉我！",
+          "tools_used": []
+        }
+      }
+    },
+    {
+      "path": "/api/agent/chat",
+      "passed": true,
+      "response": {
+        "code": 0,
+        "message": "success",
+        "data": {
+          "reply": "计算结果是：**925,886** ✅",
+          "tools_used": [
+            "calculate"
+          ]
+        }
+      }
+    },
+    {
+      "path": "/api/chat/stream",
+      "passed": true,
+      "reply": "小明"
+    },
+    {
+      "scenario": "shutdown_restart_persistence",
+      "passed": true
+    }
+  ]
+}

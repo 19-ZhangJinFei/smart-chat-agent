@@ -239,7 +239,7 @@ def build(profile, output):
     h("3.2　关键功能实现");h("3.2.1　模型调用与结构化抽取",3)
     p("第一课演示脚本分别实现OpenAI SDK裸调用、LangChain普通对话、命令行流式、手动历史、最小FastAPI和结构化抽取。CourseInfo与BookInfo使用Pydantic Schema，BookInfo价格为float。真实能力验证抽取了课程教师和时间，书籍价格为45.0，结果保存于model-capabilities.json。导入脚本不会自动产生模型请求。")
     code("backend/app/schemas.py",'class BookInfo(BaseModel):\n    name: str\n    author: str\n    price: float  # 课后练习要求浮点价格\n    category: str')
-    p("模型资源延迟初始化，应用生命周期关闭数据库与检查点连接；环境变量优先于本地配置。模型名称、地址、超时和上下文窗口均可配置，依赖经过安装、pip check与Linux镜像构建后固定，避免不同机器得到随时间变化的组合。")
+    p("模型资源延迟初始化，应用生命周期关闭数据库、检查点及普通、分类、智能体模型的同步和异步HTTP连接池；启动失败仍清理已创建资源。环境变量优先于本地配置。模型名称、地址、超时和上下文窗口均可配置，依赖经过安装、pip check与Linux镜像构建后固定。")
 
     document.add_page_break()
     h("3.2.2　智能体工具调用",3)
@@ -249,7 +249,7 @@ def build(profile, output):
         ("calculate","算术表达式→数值","AST与Decimal"),("get_current_time","无参数→北京时间","系统真实时钟"),
         ("get_coupon","优惠码→折扣条件","模拟有效、失效样例")],[4.3,6.3,5])
     p("calculate只接受数字、括号、正负号和四则运算，禁止函数、变量、幂和科学计数法；限制长度、AST节点、括号深度及数值规模，处理除零。AST会消除冗余括号，所以源码还要单独扫描括号深度。3874乘239结果925886由Decimal计算，不靠模型猜测。")
-    code("backend/app/agent.py",'# create_agent负责模型→工具→观察的循环\nself._graph = create_agent(\n    model=self.model or make_model(self.settings, 0),\n    tools=TOOLS,\n    system_prompt=SYSTEM_PROMPT + AGENT_RULE,\n    checkpointer=self.saver,\n    state_schema=ChatAgentState,\n)\n# 每个业务会话对应稳定thread_id\nconfig = {"configurable": {"thread_id": session_id}}')
+    code("backend/app/agent.py",'# model为缓存的模型；create_agent负责模型→工具→观察\nself._graph = create_agent(\n    model=model,\n    tools=TOOLS,\n    system_prompt=SYSTEM_PROMPT + AGENT_RULE,\n    checkpointer=self.saver,\n    state_schema=ChatAgentState,\n)\n# 每个业务会话对应稳定thread_id\nconfig = {"configurable": {"thread_id": session_id}}')
     p("智能体限制执行步数。通过本轮HumanMessage的唯一ID定位新增消息，再提取工具调用，避免把上轮工具重复展示到闲聊回复。")
 
     document.add_page_break()
@@ -272,7 +272,7 @@ def build(profile, output):
     h("4　测试与优化",1);h("4.1　测试方案与用例")
     p("测试分为离线回归、真实模型、浏览器和容器。离线测试注入确定性模型，真实执行LangGraph循环；真实评估使用独立检查点目录，每题唯一会话。CI不配置真实Key，但GitHub账号账单问题导致任务未启动，不能记作云端通过。本机分层验证与当次结果见表6。")
     table("表6　分层验证结果",["层次","主要内容","当次结果"],[
-        ("后端离线","工具、数据库、接口、恢复、断流、限流","29通过"),("前端离线","UTF-8、跨块JSON、CRLF、错误","4通过"),
+        ("后端离线","接口、恢复、断流、限流、资源释放","32通过"),("前端离线","UTF-8、跨块JSON、CRLF、错误","4通过"),
         ("构建依赖","pip check、npm build、Docker build","通过"),("模型能力","普通、CourseInfo、BookInfo、流式","4通过"),
         ("真实API","多轮、模式、路由、SSE、重启","9通过"),("浏览器","管理、模式、标签、刷新、删除","通过"),
         ("容器","代理、持久化、备份、限流","13通过")],[3,9,3.6])

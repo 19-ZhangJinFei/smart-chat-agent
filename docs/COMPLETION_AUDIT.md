@@ -5,6 +5,7 @@
 | 计划要求 | 权威证据 | 状态 |
 |---|---|---|
 | 环境和固定依赖 | Python3.11.9、pip check、requirements.txt、package-lock | 完成 |
+| 模型与数据库生命周期 | test_lifecycle真实SDK连接池、启动失败及部分检查点初始化清理 | 完成 |
 | Key普通/结构化/流式能力 | model-capabilities.json四项，工具另见真实评估 | 完成 |
 | 第一课课堂和BookInfo | demo脚本、结构化真实结果、接口和数据库测试 | 完成 |
 | 会话CRUD/隔离/重启/事务 | test_backend、live-integration、容器持久化记录 | 完成 |
@@ -19,7 +20,7 @@
 | 条件与未来日期 | advanced-model最终答案2/2，初测保留 | 完成，模型解释仍有局限 |
 | Docker停启/重建/恢复 | docker-acceptance13项、SQLite备份，续查修复引擎后Compose健康 | 完成，当前8081可访问 |
 | 当前聊天工作树 | git worktree list，当前树关联智聊docs分支 | 完成，原清单已保留 |
-| GitHub分支和PR | #5/#6/#7，v0.1/v0.2，开发日志 | 核心验收完成，最终发布以GitHub标签为准 |
+| GitHub分支和PR | #5—#8已合并、v0.1/v0.2/v1.0.0，补丁分支与开发日志 | 核心验收完成，补丁发布以GitHub标签为准 |
 | CI | 任务未启动，账单锁定注释 | 未完成，需要账户所有者处理 |
 | 报告排版及逐页检查 | 本地DOCX，15页逐页视觉检查、自动目录和页码域核对 | 初稿完成，正文13页 |
 | 原始学校模板保真 | 金山下载要求登录，原DOCX未取得 | 未完成，需要模板文件 |
