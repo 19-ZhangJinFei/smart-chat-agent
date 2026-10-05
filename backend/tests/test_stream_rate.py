@@ -39,3 +39,50 @@ def test_21st_request_and_health_exemption(settings):
             assert client.get("/api/sessions").status_code == 200
         response = client.get("/api/sessions")
         assert response.status_code == 429 and response.headers["retry-after"]
+
+
+def test_tcp_disconnect_discards_partial_answer_and_unlocks(settings):
+    """真实TCP断流，避免TestClient缓冲完整响应掩盖取消问题。"""
+    import asyncio
+    import socket
+    import threading
+    import time
+
+    import httpx
+    import uvicorn
+
+    class SlowModels(FakeModels):
+        async def stream(self, message, history):
+            yield "第一段中文"
+            await asyncio.sleep(5)
+            yield "最后一段"
+
+    sock = socket.socket()
+    sock.bind(("127.0.0.1", 0))
+    port = sock.getsockname()[1]
+    server = uvicorn.Server(uvicorn.Config(create_app(settings, SlowModels()), log_level="error"))
+    thread = threading.Thread(target=server.run, kwargs={"sockets": [sock]}, daemon=True)
+    thread.start()
+    try:
+        for _ in range(100):
+            if server.started:
+                break
+            time.sleep(0.02)
+        assert server.started
+        with httpx.Client(base_url=f"http://127.0.0.1:{port}", timeout=3) as client:
+            sid = client.post("/api/sessions").json()["data"]["session"]["id"]
+            with client.stream("POST", "/api/chat/stream", json={"message": "hi", "session_id": sid}) as response:
+                lines = response.iter_lines()
+                assert "第一段中文" in next(lines)
+                assert client.delete(f"/api/sessions/{sid}").status_code == 409
+            for _ in range(100):
+                renamed = client.patch(f"/api/sessions/{sid}", json={"title": "断开后可改名"})
+                if renamed.status_code == 200:
+                    break
+                time.sleep(0.02)
+            assert renamed.status_code == 200
+            assert client.get(f"/api/sessions/{sid}/messages").json()["data"]["messages"] == []
+    finally:
+        server.should_exit = True
+        thread.join(timeout=5)
+        sock.close()

@@ -1,0 +1,15 @@
+﻿index,group,question,expected,actual,passed,exact_match,seconds
+0,course,订单DD20240001到哪了？,['query_order'],['query_order'],True,True,3.64
+1,course,我的订单DD20240003签收了吗,['query_order'],['query_order'],True,True,2.938
+2,course,长沙今天天气怎么样？,['get_weather'],['get_weather'],True,True,2.156
+3,course,北京会下雨吗？要不要带伞,['get_weather'],['get_weather'],True,True,2.594
+4,course,计算1234*5678等于多少,['calculate'],['calculate'],True,True,1.89
+5,course,3.5乘以12是多少,['calculate'],['calculate'],True,True,1.86
+6,course,现在几点了？,['get_current_time'],['get_current_time'],True,True,1.843
+7,course,今天几号？,['get_current_time'],['get_current_time'],True,True,1.688
+8,course,用一句话介绍你自己,[],[],True,True,1.328
+9,course,Python和Java的区别是什么,[],[],True,True,7.047
+10,extra,WELCOME10优惠券能用吗？,['get_coupon'],['get_coupon'],True,True,2.016
+11,extra,现在几点？顺便算365*24*60，一年有多少分钟？,"['calculate', 'get_current_time']","['calculate', 'get_current_time']",True,True,3.171
+12,extra,订单NOTFOUND是什么状态？,['query_order'],['query_order'],True,True,2.969
+13,extra,太原天气怎么样？,['get_weather'],['get_weather'],True,True,2.235

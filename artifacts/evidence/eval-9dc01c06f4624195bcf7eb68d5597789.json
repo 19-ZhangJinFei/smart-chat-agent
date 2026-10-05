@@ -1,0 +1,212 @@
+{
+  "run_id": "9dc01c06f4624195bcf7eb68d5597789",
+  "timestamp": "2026-10-05T02:23:20.763918+08:00",
+  "model": "qwen-plus",
+  "course_correct": 10,
+  "course_total": 10,
+  "course_accuracy": 1.0,
+  "rows": [
+    {
+      "question": "订单DD20240001到哪了？",
+      "expected": [
+        "query_order"
+      ],
+      "actual": [
+        "query_order"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "订单 DD20240001 已发货，由顺丰速运承运，预计明日18:00前送达。如有其他问题，欢迎随时咨询！",
+      "index": 0,
+      "group": "course",
+      "seconds": 4.203
+    },
+    {
+      "question": "我的订单DD20240003签收了吗",
+      "expected": [
+        "query_order"
+      ],
+      "actual": [
+        "query_order"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "您的订单 DD20240003 已于 2026-09-18 14:32 成功签收。如有其他问题，欢迎随时咨询！",
+      "index": 1,
+      "group": "course",
+      "seconds": 2.688
+    },
+    {
+      "question": "长沙今天天气怎么样？",
+      "expected": [
+        "get_weather"
+      ],
+      "actual": [
+        "get_weather"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "长沙今天天气晴朗，气温25℃，微风，适合出行和发货。",
+      "index": 2,
+      "group": "course",
+      "seconds": 1.781
+    },
+    {
+      "question": "北京会下雨吗？要不要带伞",
+      "expected": [
+        "get_weather"
+      ],
+      "actual": [
+        "get_weather"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "根据查询结果，北京今天是多云天气，气温18℃，早晚温差较大。目前没有降雨预报，暂时不需要带伞。但建议您早晚出门时适当增添衣物，注意保暖。",
+      "index": 3,
+      "group": "course",
+      "seconds": 2.641
+    },
+    {
+      "question": "计算1234*5678等于多少",
+      "expected": [
+        "calculate"
+      ],
+      "actual": [
+        "calculate"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "1234 × 5678 = 7,006,652",
+      "index": 4,
+      "group": "course",
+      "seconds": 2.047
+    },
+    {
+      "question": "3.5乘以12是多少",
+      "expected": [
+        "calculate"
+      ],
+      "actual": [
+        "calculate"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "3.5 乘以 12 等于 42。",
+      "index": 5,
+      "group": "course",
+      "seconds": 2.953
+    },
+    {
+      "question": "现在几点了？",
+      "expected": [
+        "get_current_time"
+      ],
+      "actual": [
+        "get_current_time"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "现在是北京时间 2026年10月05日 02:23。",
+      "index": 6,
+      "group": "course",
+      "seconds": 2.265
+    },
+    {
+      "question": "今天几号？",
+      "expected": [
+        "get_current_time"
+      ],
+      "actual": [
+        "get_current_time"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "今天是2026年10月5日。",
+      "index": 7,
+      "group": "course",
+      "seconds": 1.672
+    },
+    {
+      "question": "用一句话介绍你自己",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "exact_match": true,
+      "reply": "我是「智聊」，您的电商智能客服，可帮您查询订单、天气、优惠券，进行数学计算，或获取当前时间。",
+      "index": 8,
+      "group": "course",
+      "seconds": 1.172
+    },
+    {
+      "question": "Python和Java的区别是什么",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "exact_match": true,
+      "reply": "Python 和 Java 是两种主流编程语言，主要区别如下：\n\n- **语法风格**：Python 语法简洁、强调可读性（如用缩进定义代码块）；Java 语法更严谨，需显式声明类型、使用大括号 `{}` 和分号 `;`。\n\n- **执行方式**：Python 是解释型语言（源码经解释器逐行执行）；Java 是编译型语言（先编译为字节码 `.class`，再由 JVM 解释/即时编译执行）。\n\n- **类型系统**：Python 是动态类型（变量类型在运行时确定）；Java 是静态类型（变量类型需在编译时声明且不可变）。\n\n- **内存管理**：两者均支持自动垃圾回收，但 Java 的 GC 更精细可控（如多种垃圾收集器），Python 主要依赖引用计数 + 循环检测。\n\n- **应用场景**：  \n  - Python 常用于数据分析、AI/ML、脚本自动化、Web 后端（Django/Flask）；  \n  - Java 广泛用于企业级应用、Android 开发、大型分布式系统（Spring 生态）。\n\n- **性能**：Java 通常执行更快（JIT 编译优化充分）；Python 更注重开发效率，性能敏感场景可通过 C 扩展或 PyPy 提升。\n\n如需了解某一方面（如并发模型、学习曲线或电商系统中如何选型），欢迎进一步说明 😊",
+      "index": 9,
+      "group": "course",
+      "seconds": 7.594
+    },
+    {
+      "question": "WELCOME10优惠券能用吗？",
+      "expected": [
+        "get_coupon"
+      ],
+      "actual": [
+        "get_coupon"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "WELCOME10优惠券**可用**，享受**九折优惠**，适用于新用户，且订单金额需满100元。",
+      "index": 10,
+      "group": "extra",
+      "seconds": 2.453
+    },
+    {
+      "question": "现在几点？顺便算365*24*60，一年有多少分钟？",
+      "expected": [
+        "calculate",
+        "get_current_time"
+      ],
+      "actual": [
+        "calculate",
+        "get_current_time"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "现在是北京时间 2026年10月05日 02:23:16。  \n一年（按365天计）有 **525,600 分钟**。",
+      "index": 11,
+      "group": "extra",
+      "seconds": 3.062
+    },
+    {
+      "question": "订单NOTFOUND是什么状态？",
+      "expected": [
+        "query_order"
+      ],
+      "actual": [],
+      "passed": false,
+      "exact_match": false,
+      "reply": "订单号 NOTFOUND 未在系统中找到。请确认订单号是否正确，或提供其他有效订单号以便查询。",
+      "index": 12,
+      "group": "extra",
+      "seconds": 1.125
+    },
+    {
+      "question": "太原天气怎么样？",
+      "expected": [
+        "get_weather"
+      ],
+      "actual": [
+        "get_weather"
+      ],
+      "passed": true,
+      "exact_match": true,
+      "reply": "抱歉，太原暂无教学模拟天气数据。如需了解真实天气，请通过天气应用或网站查询。",
+      "index": 13,
+      "group": "extra",
+      "seconds": 1.875
+    }
+  ]
+}

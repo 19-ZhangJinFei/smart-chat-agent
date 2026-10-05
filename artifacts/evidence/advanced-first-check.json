@@ -1,0 +1,28 @@
+[
+  {
+    "question": "查订单DD20240001，如果已发货则查询当前北京时间，否则只说明订单状态。",
+    "expected": [
+      "get_current_time",
+      "query_order"
+    ],
+    "passed": true,
+    "reply": "当前北京时间是：2026年10月5日 02:38:58。",
+    "tools_used": [
+      "query_order",
+      "get_current_time"
+    ]
+  },
+  {
+    "question": "查询当前日期，再算从今天到2026-11-04有多少天，按日期整天计算。",
+    "expected": [
+      "calculate",
+      "get_current_time"
+    ],
+    "passed": true,
+    "reply": "当前日期是2024年5月20日（北京时间）。  \n从今天（2024-05-20）到2026-11-04，按整天计算，共 **619天**（教学模拟计算结果）。",
+    "tools_used": [
+      "get_current_time",
+      "calculate"
+    ]
+  }
+]
